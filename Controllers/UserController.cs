@@ -39,7 +39,7 @@ namespace StudentManagementSystem.Controllers
             return View();
         }
 
-        public async Task<IActionResult> Index(string sortOrder, string firstName, string lastName, string email, string course, int? semester, int? page)
+        public async Task<IActionResult> StudentDetails(string sortOrder, string firstName, string lastName, string email, string course, int? semester, int? page)
         {
             ViewData["CurrentSort"] = sortOrder;
             ViewData["FirstNameSort"] = string.IsNullOrEmpty(sortOrder) ? "firstName_desc" : "";
@@ -64,7 +64,9 @@ namespace StudentManagementSystem.Controllers
                 .OrderBy(s => s)
                 .ToListAsync();
 
-            IQueryable<User> user = _context.User;
+            IQueryable<User> user = _context.User.Where(u => u.Role == "Student")
+    .Include(u => u.Credential)
+    .Include(u => u.StudentDetails);
 
             if (!string.IsNullOrEmpty(firstName))
             {
@@ -234,7 +236,7 @@ namespace StudentManagementSystem.Controllers
                 _context.Add(user);
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "Student has been added successfully";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("StudentDetails");
             }
             return View(user);
         }
@@ -282,7 +284,7 @@ namespace StudentManagementSystem.Controllers
                     }
                 }
                 TempData["EditSuccessMessage"] = "Student has been edited successfully";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(StudentDetails));
             }
             return View(user);
         }
@@ -297,7 +299,7 @@ namespace StudentManagementSystem.Controllers
                 _context.User.Remove(user);
                 await _context.SaveChangesAsync();
             }
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(StudentDetails));
         }
 
         private bool StudentExists(int id)

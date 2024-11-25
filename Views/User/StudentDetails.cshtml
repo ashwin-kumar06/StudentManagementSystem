@@ -58,12 +58,12 @@
                 </h5>
                 @if (isFiltered)
                 {
-                    <a asp-action="Index" class="btn btn-link text-decoration-none">
+                    <a asp-action="StudentDetails" class="btn btn-link text-decoration-none">
                         <i class="bi bi-x-circle me-1"></i>Clear All Filters
                     </a>
                 }
             </div>
-            <form asp-action="Index" method="get" id="filterForm" class="needs-validation" novalidate>
+            <form asp-action="StudentDetails" method="get" id="filterForm" class="needs-validation" novalidate>
                 <input type="hidden" name="sortOrder" value="@ViewData["CurrentSort"]" />
                 <div class="row g-3">
                     <div class="col-md-2">
@@ -125,7 +125,7 @@
             <p class="text-muted mb-4">
                 @if (isFiltered)
                 {
-                    @:<span>Try adjusting your filters or <a asp-action="Index" class="text-decoration-none">clear all filters </a>to see all students.</span>
+                    @:<span>Try adjusting your filters or <a asp-action="StudentDetails" class="text-decoration-none">clear all filters </a>to see all students.</span>
                }
                 else
                 {
@@ -148,7 +148,7 @@
                     <thead class="table-light">
                         <tr>
                             <th class="border-bottom-0">
-                                <a asp-action="Index" asp-route-sortOrder="@firstNameSort"
+                                <a asp-action="StudentDetails" asp-route-sortOrder="@firstNameSort"
                                     asp-route-firstName="@currentFirstName" asp-route-lastName="@currentLastName"
                                     asp-route-email="@currentEmail" asp-route-course="@currentCourse"
                                     asp-route-semester="@currentSemester"
@@ -171,7 +171,7 @@
                                 </a>
                             </th>
                             <th class="border-bottom-0">
-                                <a asp-action="Index" asp-route-sortOrder="@lastNameSort"
+                                <a asp-action="StudentDetails" asp-route-sortOrder="@lastNameSort"
                                     asp-route-firstName="@currentFirstName" asp-route-lastName="@currentLastName"
                                     asp-route-email="@currentEmail" asp-route-course="@currentCourse"
                                     asp-route-semester="@currentSemester"
@@ -196,7 +196,7 @@
                             <th class="border-bottom-0">Email</th>
                             <th class="border-bottom-0">Course</th>
                             <th class="border-bottom-0">
-                                <a asp-action="Index" asp-route-sortOrder="@semesterSort"
+                                <a asp-action="StudentDetails" asp-route-sortOrder="@semesterSort"
                                     asp-route-firstName="@currentFirstName" asp-route-lastName="@currentLastName"
                                     asp-route-email="@currentEmail" asp-route-course="@currentCourse"
                                     asp-route-semester="@currentSemester"
@@ -310,7 +310,7 @@
                             @if (Model.HasPreviousPage)
                             {
                                 <li class="page-item">
-                                    <a asp-action="Index" asp-route-page="@(Model.PageIndex - 1)"
+                                    <a asp-action="StudentDetails" asp-route-page="@(Model.PageIndex - 1)"
                                         asp-route-sortOrder="@sortOrder" asp-route-firstName="@currentFirstName"
                                         asp-route-lastName="@currentLastName" asp-route-email="@currentEmail"
                                         asp-route-course="@currentCourse" asp-route-semester="@currentSemester"
@@ -323,7 +323,7 @@
                             @for (var i = 1; i <= Model.TotalPages; i++)
                             {
                                 <li class="page-item @(i == Model.PageIndex ? "active" : "")">
-                                    <a asp-action="Index" asp-route-page="@i" asp-route-sortOrder="@sortOrder"
+                                    <a asp-action="StudentDetails" asp-route-page="@i" asp-route-sortOrder="@sortOrder"
                                         asp-route-firstName="@currentFirstName" asp-route-lastName="@currentLastName"
                                         asp-route-email="@currentEmail" asp-route-course="@currentCourse"
                                         asp-route-semester="@currentSemester" class="page-link">@i</a>
@@ -333,7 +333,7 @@
                             @if (Model.HasNextPage)
                             {
                                 <li class="page-item">
-                                    <a asp-action="Index" asp-route-page="@(Model.PageIndex + 1)"
+                                    <a asp-action="StudentDetails" asp-route-page="@(Model.PageIndex + 1)"
                                         asp-route-sortOrder="@sortOrder" asp-route-firstName="@currentFirstName"
                                         asp-route-lastName="@currentLastName" asp-route-email="@currentEmail"
                                         asp-route-course="@currentCourse" asp-route-semester="@currentSemester"
