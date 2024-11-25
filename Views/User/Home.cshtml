@@ -1,0 +1,94 @@
+@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="container py-4">
+    <div class="p-5 mb-4 bg-primary bg-gradient text-white rounded-3">
+        <div class="container-fluid py-5">
+            <h1 class="display-5 fw-bold">Student Management System</h1>
+            <p class="col-md-8 fs-4">Streamline your educational institution's administrative tasks with our comprehensive student management solution.</p>
+        </div>
+    </div>
+
+    
+        <div class="col-md-6">
+            <div class="h-100 p-5 bg-light border rounded-3">
+                <h2>Quick Actions</h2>
+                <div class="d-grid gap-3">
+                    <a asp-controller="Students" asp-action="Create" class="btn btn-primary">Add New Student</a>
+                    <a asp-controller="Students" asp-action="Index" class="btn btn-success">View Students</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 py-4">
+        <div class="col-12">
+            <h2 class="border-bottom pb-2">System Operations Guide</h2>
+        </div>
+        
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h3 class="card-title text-success">
+                        <i class="bi bi-plus-circle"></i> Create
+                    </h3>
+                    <ul class="list-unstyled">
+                        <li><i class="bi bi-check2"></i> Add new students</li>
+                        <li><i class="bi bi-check2"></i> Create courses</li>
+                        <li><i class="bi bi-check2"></i> Set up class schedules</li>
+                        <li><i class="bi bi-check2"></i> Register teachers</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h3 class="card-title text-info">
+                        <i class="bi bi-eye"></i> Read
+                    </h3>
+                    <ul class="list-unstyled">
+                        <li><i class="bi bi-check2"></i> View student profiles</li>
+                        <li><i class="bi bi-check2"></i> Check attendance records</li>
+                        <li><i class="bi bi-check2"></i> Monitor grades</li>
+                        <li><i class="bi bi-check2"></i> Access reports</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h3 class="card-title text-warning">
+                        <i class="bi bi-pencil"></i> Update
+                    </h3>
+                    <ul class="list-unstyled">
+                        <li><i class="bi bi-check2"></i> Modify student info</li>
+                        <li><i class="bi bi-check2"></i> Update course details</li>
+                        <li><i class="bi bi-check2"></i> Edit attendance</li>
+                        <li><i class="bi bi-check2"></i> Revise grades</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h3 class="card-title text-danger">
+                        <i class="bi bi-trash"></i> Delete
+                    </h3>
+                    <ul class="list-unstyled">
+                        <li><i class="bi bi-check2"></i> Remove students</li>
+                        <li><i class="bi bi-check2"></i> Archive courses</li>
+                        <li><i class="bi bi-check2"></i> Delete records</li>
+                        <li><i class="bi bi-check2"></i> Clean old data</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
