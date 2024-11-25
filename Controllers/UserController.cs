@@ -33,6 +33,7 @@ namespace StudentManagementSystem.Controllers
             return View();
         }
 
+        [Authorize]
         public IActionResult Home()
         {
             return View();
@@ -130,7 +131,7 @@ namespace StudentManagementSystem.Controllers
                 {
                     HttpContext.Session.SetString("JWTToken", token);
                 }
-                return RedirectToAction("Index");
+                return RedirectToAction("Home");
             }
             else
             {

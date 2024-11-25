@@ -228,19 +228,37 @@
                                 <td>@Html.DisplayFor(modelItem => item.FirstName)</td>
                                 <td>@Html.DisplayFor(modelItem => item.LastName)</td>
                                 <td>
-                                    <a href="mailto:@item.Credential.Email" class="text-decoration-none">
-                                        @Html.DisplayFor(modelItem => item.Credential.Email)
-                                    </a>
+                                    @if (item.Credential != null){
+                                        <a href="mailto:@item.Credential.Email" class="text-decoration-none">
+                                            @Html.DisplayFor(modelItem => item.Credential.Email)</a>
+                                    }
+                                    else{
+                                        <span class="text-muted">No email available</span>
+                                    }
                                 </td>
                                 <td>
-                                    <span class="badge bg-primary bg-opacity-10 text-primary">
-                                        @Html.DisplayFor(modelItem => item.StudentDetails.Course)
-                                    </span>
+                                    @if (item.StudentDetails != null)
+                                    {
+                                        <span class="badge bg-primary bg-opacity-10 text-primary">
+                                            @Html.DisplayFor(modelItem => item.StudentDetails.Course)
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">N/A</span>
+                                    }
                                 </td>
                                 <td>
-                                    <span class="badge bg-secondary bg-opacity-10 text-secondary">
-                                        Semester @Html.DisplayFor(modelItem => item.StudentDetails.Semester)
-                                    </span>
+                                    @if (item.StudentDetails != null)
+                                    {
+                                        <span class="badge bg-secondary bg-opacity-10 text-secondary">
+                                            Semester @Html.DisplayFor(modelItem => item.StudentDetails.Semester)
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">N/A</span>
+                                    }
                                 </td>
                                 <td class="text-end">
                                     <div class="btn-group">
