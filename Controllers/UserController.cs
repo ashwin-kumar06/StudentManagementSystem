@@ -1,9 +1,12 @@
+using System.Security.Cryptography;
+using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StudentManagementSystem.Data;
 using StudentManagementSystem.Models;
 using StudentManagementSystem.Services;
+using StudentManagementSystem.ViewModels;
 
 namespace StudentManagementSystem.Controllers
 {
@@ -20,15 +23,15 @@ namespace StudentManagementSystem.Controllers
             _authService = authService;
         }
 
-        // public IActionResult Login()
-        // {
-        //     return View();
-        // }
+        public IActionResult Login()
+        {
+            return View();
+        }
 
-        // public IActionResult Registration()
-        // {
-        //     return View();
-        // }
+        public IActionResult Registration()
+        {
+            return View();
+        }
 
         public IActionResult Home()
         {
@@ -102,109 +105,119 @@ namespace StudentManagementSystem.Controllers
             return View(paginatedStudents);
         }
 
-        // [HttpPost]
-        // public async Task<IActionResult> Login(UserCredential model)
-        // {
-        //     var user = await _context.User
-        //     .Include(u => u.Credential)
-        //     .FirstOrDefaultAsync(u => u.Credential.Email == model.Email && u.Credential.Password == model.Password);
+        [HttpPost]
+        public async Task<IActionResult> Login(UserCredential model)
+        {
+            var user = await _context.User
+                .Include(u => u.Credential)
+                .FirstOrDefaultAsync(u => u.Credential.Email == model.Email);
 
-        //     if (user == null)
-        //     {
-        //         TempData["LoginFailureMessage"] = "Invalid email or password";
+            if (user != null && VerifyPassword(model.Password, user.Credential.Password))
+            {
+                var token = _authService.GenerateJwtToken(user);
 
-        //     }
-        //     else
-        //     {
-        //         var token = _authService.GenerateJwtToken(user);
+                if (token != null)
+                {
+                    Response.Cookies.Append("JWTToken", token, new CookieOptions
+                    {
+                        HttpOnly = true,
+                        Secure = true,
+                        SameSite = SameSiteMode.Strict,
+                        Expires = DateTime.Now.AddDays(7)
+                    });
+                }
+                else
+                {
+                    HttpContext.Session.SetString("JWTToken", token);
+                }
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                TempData["LoginFailureMessage"] = "Invalid email or password";
+                return RedirectToAction("Login");
+            }
+        }
 
-        //         if (token != null)
-        //         {
-        //             Response.Cookies.Append("JWTToken", token, new CookieOptions
-        //             {
-        //                 HttpOnly = true,
-        //                 Secure = true,
-        //                 SameSite = SameSiteMode.Strict,
-        //                 Expires = DateTime.Now.AddDays(7)
-        //             });
-        //         }
-        //         else
-        //         {
-        //             HttpContext.Session.SetString("JWTToken", token);
-        //         }
-        //         return RedirectToAction("Index");
-        //     }
+        [HttpPost]
+        public async Task<IActionResult> Registration(RegisterViewModel model)
+        {
+            // if (!ModelState.IsValid)
+            // {
+            //     return View(model);
+            // }
 
-        //     return RedirectToAction("Login");
+            // Check if email already exists
+            if (await _context.UserCredentials.AnyAsync(u => u.Email == model.Email))
+            {
+                ModelState.AddModelError("Email", "Email is already registered.");
+                return View(model);
+            }
 
-        // }
+            // Create User entity based on role
+            var user = new User
+            {
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                DateOfBirth = model.DateOfBirth,
+                Role = model.Role
+            };
 
-        // [HttpPost]
-        // public async Task<IActionResult> Registration(RegisterViewModel model)
-        // {
-        //     // if (!ModelState.IsValid)
-        //     // {
-        //     //     return View(model);
-        //     // }
+            // Add additional details for Student
+            if (model.Role == "Student")
+            {
+                user.StudentDetails = new StudentDetails
+                {
+                    Course = model.StudentDetails.Course,
+                    Semester = model.StudentDetails.Semester
+                };
+            }
 
-        //     // Check if email already exists
-        //     if (await _context.UserCredentials.AnyAsync(u => u.Email == model.Email))
-        //     {
-        //         ModelState.AddModelError("Email", "Email is already registered.");
-        //         return View(model);
-        //     }
+            // Create user credential
+            var userCredential = new UserCredential
+            {
+                Email = model.Email,
+                Password = HashPassword(model.Password),
+                LastLoginDate = DateTime.UtcNow,
+                User = user
+            };
 
-        //     // Create User entity based on role
-        //     var user = new User
-        //     {
-        //         FirstName = model.FirstName,
-        //         LastName = model.LastName,
-        //         DateOfBirth = model.DateOfBirth,
-        //         Role = model.Role
-        //     };
+            // Add to context and save
+            try
+            {
+                _context.User.Add(user);
+                _context.UserCredentials.Add(userCredential);
+                await _context.SaveChangesAsync();
 
-        //     // Add additional details for Student
-        //     if (model.Role == "Student")
-        //     {
-        //         user.StudentDetails.Course = model.StudentDetails.Course;
-        //         user.StudentDetails.Semester = model.StudentDetails.Semester;
-        //     }
+                // Redirect to login or home page
+                TempData["SuccessMessage"] = "Registration successful. Please log in.";
+                return RedirectToAction("Login");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "An error occurred during registration: " + ex.Message);
+                return View(model);
+            }
+        }
 
-        //     // Create user credential
-        //     var userCredential = new UserCredential
-        //     {
-        //         Email = model.Email,
-        //         Password = HashPassword(model.Password),
-        //         LastLoginDate = DateTime.UtcNow,
-        //         User = user
-        //     };
+        private string HashPassword(string password)
+        {
+            using (var sha256 = SHA256.Create())
+            {
+                var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                return Convert.ToBase64String(hashedBytes);
+            }
+        }
 
-        //     // Add to context and save
-        //     try
-        //     {
-        //         _context.User.Add(user);
-        //         _context.UserCredentials.Add(userCredential);
-        //         await _context.SaveChangesAsync();
-
-        //         // Redirect to login or home page
-        //         TempData["SuccessMessage"] = "Registration successful. Please log in.";
-        //         return RedirectToAction("Login");
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         ModelState.AddModelError("", "An error occurred during registration: " + ex.Message);
-        //         return View(model);
-        //     }
-        // }
-
-        // private string HashPassword(string password)
-        // {
-        //     using (var sha256 = SHA256.Create())
-        //     {
-        //         var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-        //         return Convert.ToBase64String(hashedBytes);
-        //     }
-        // }
+        private bool VerifyPassword(string inputPassword, string storedHash)
+        {
+            using (var sha256 = SHA256.Create())
+            {
+                var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(inputPassword));
+                var hashedInput = Convert.ToBase64String(hashedBytes);
+                return hashedInput == storedHash;
+            }
+        }
 
         public IActionResult Create()
         {

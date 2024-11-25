@@ -220,3 +220,4 @@ D:\Tasks\05-11-2024\StudentManagementSystem\obj\Debug\net9.0\StudentManagementSy
 D:\Tasks\05-11-2024\StudentManagementSystem\obj\Debug\net9.0\ref\StudentManagementSystem.dll
 D:\Tasks\05-11-2024\StudentManagementSystem\bin\Debug\net9.0\BCrypt.Net-Next.dll
 D:\Tasks\05-11-2024\StudentManagementSystem\bin\Debug\net9.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+D:\Tasks\05-11-2024\StudentManagementSystem\obj\Debug\net9.0\StudentManagementSystem.sourcelink.json
