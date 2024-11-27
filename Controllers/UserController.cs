@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
@@ -10,7 +11,7 @@ using StudentManagementSystem.ViewModels;
 
 namespace StudentManagementSystem.Controllers
 {
-    [Authorize]
+
     public class UserController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -28,24 +29,56 @@ namespace StudentManagementSystem.Controllers
             return View();
         }
 
+        [Authorize]
+        public async Task<IActionResult> Profile(int? id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if(id==null){
+                id = int.Parse(userId);
+            }
+
+            var user = await _context.User
+                .Include(u => u.Credential)
+                .Include(u => u.StudentDetails)
+                .FirstOrDefaultAsync(u => u.Id == id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return View(user);
+        }
+
+        public IActionResult Logout()
+        {
+            if (Request.Cookies.ContainsKey("JWTToken"))
+            {
+                Response.Cookies.Delete("JWTToken");
+            }
+
+            return RedirectToAction("Login");
+        }
+
         public IActionResult Registration()
         {
             return View();
         }
 
-        [Authorize]
+
         public IActionResult Home()
         {
             return View();
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> StudentDetails(string sortOrder, string firstName, string lastName, string email, string course, int? semester, int? page)
         {
             ViewData["CurrentSort"] = sortOrder;
             ViewData["FirstNameSort"] = string.IsNullOrEmpty(sortOrder) ? "firstName_desc" : "";
             ViewData["LastNameSort"] = sortOrder == "lastName" ? "lastName_desc" : "lastName";
             ViewData["SemesterSort"] = sortOrder == "semester" ? "semester_desc" : "semester";
-
             ViewData["CurrentFirstNameFilter"] = firstName;
             ViewData["CurrentLastNameFilter"] = lastName;
             ViewData["CurrentEmailFilter"] = email;
@@ -64,9 +97,7 @@ namespace StudentManagementSystem.Controllers
                 .OrderBy(s => s)
                 .ToListAsync();
 
-            IQueryable<User> user = _context.User.Where(u => u.Role == "Student")
-    .Include(u => u.Credential)
-    .Include(u => u.StudentDetails);
+            IQueryable<User> user = _context.User.Where(u => u.Role == "Student").Include(u => u.Credential).Include(u => u.StudentDetails);
 
             if (!string.IsNullOrEmpty(firstName))
             {
@@ -145,19 +176,12 @@ namespace StudentManagementSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> Registration(RegisterViewModel model)
         {
-            // if (!ModelState.IsValid)
-            // {
-            //     return View(model);
-            // }
-
-            // Check if email already exists
             if (await _context.UserCredentials.AnyAsync(u => u.Email == model.Email))
             {
                 ModelState.AddModelError("Email", "Email is already registered.");
                 return View(model);
             }
 
-            // Create User entity based on role
             var user = new User
             {
                 FirstName = model.FirstName,
@@ -166,7 +190,6 @@ namespace StudentManagementSystem.Controllers
                 Role = model.Role
             };
 
-            // Add additional details for Student
             if (model.Role == "Student")
             {
                 user.StudentDetails = new StudentDetails
@@ -176,7 +199,6 @@ namespace StudentManagementSystem.Controllers
                 };
             }
 
-            // Create user credential
             var userCredential = new UserCredential
             {
                 Email = model.Email,
@@ -185,7 +207,6 @@ namespace StudentManagementSystem.Controllers
                 User = user
             };
 
-            // Add to context and save
             try
             {
                 _context.User.Add(user);

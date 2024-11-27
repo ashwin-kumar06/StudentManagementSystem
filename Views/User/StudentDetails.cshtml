@@ -194,6 +194,7 @@
                                 </a>
                             </th>
                             <th class="border-bottom-0">Email</th>
+                            <th class="border-bottom-0">Date Of Birth</th>
                             <th class="border-bottom-0">Course</th>
                             <th class="border-bottom-0">
                                 <a asp-action="StudentDetails" asp-route-sortOrder="@semesterSort"
@@ -227,39 +228,10 @@
                             <tr>
                                 <td>@Html.DisplayFor(modelItem => item.FirstName)</td>
                                 <td>@Html.DisplayFor(modelItem => item.LastName)</td>
-                                <td>
-                                    @if (item.Credential != null){
-                                        <a href="mailto:@item.Credential.Email" class="text-decoration-none">
-                                            @Html.DisplayFor(modelItem => item.Credential.Email)</a>
-                                    }
-                                    else{
-                                        <span class="text-muted">No email available</span>
-                                    }
-                                </td>
-                                <td>
-                                    @if (item.StudentDetails != null)
-                                    {
-                                        <span class="badge bg-primary bg-opacity-10 text-primary">
-                                            @Html.DisplayFor(modelItem => item.StudentDetails.Course)
-                                        </span>
-                                    }
-                                    else
-                                    {
-                                        <span class="text-muted">N/A</span>
-                                    }
-                                </td>
-                                <td>
-                                    @if (item.StudentDetails != null)
-                                    {
-                                        <span class="badge bg-secondary bg-opacity-10 text-secondary">
-                                            Semester @Html.DisplayFor(modelItem => item.StudentDetails.Semester)
-                                        </span>
-                                    }
-                                    else
-                                    {
-                                        <span class="text-muted">N/A</span>
-                                    }
-                                </td>
+                                <td>@Html.DisplayFor(modelItem => item.Credential.Email)</td>
+                                <td>@Html.DisplayFor(modelItem => item.DateOfBirth)</td>
+                                <td>@Html.DisplayFor(modelItem => item.StudentDetails.Course)</td>
+                                <td>@Html.DisplayFor(modelItem => item.StudentDetails.Semester)</td>
                                 <td class="text-end">
                                     <div class="btn-group">
                                         <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
@@ -268,6 +240,9 @@
                                         <a type="button" class="btn btn-sm btn-outline-danger" data-toggle="modal"
                                             data-target="#deleteModal_@item.Id">
                                             Delete
+                                        </a>
+                                        <a asp-action="Profile" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
+                                            View
                                         </a>
                                     </div>
                                 </td>

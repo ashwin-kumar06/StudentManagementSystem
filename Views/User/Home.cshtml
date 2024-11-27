@@ -10,7 +10,7 @@
         </div>
     </div>
 
-    
+    @if (User.IsInRole("Admin")){
         <div class="col-md-6">
             <div class="h-100 p-5 bg-light border rounded-3">
                 <h2>Quick Actions</h2>
@@ -20,6 +20,7 @@
                 </div>
             </div>
         </div>
+    }
     </div>
 
     <div class="row g-4 py-4">
